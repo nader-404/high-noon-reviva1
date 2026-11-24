@@ -1,17 +1,664 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#3b2418"><meta name="description" content="نموذج تجريبي للعبة مبارزة رعاة بقر بطابع أركيد">
-<link rel="manifest" href="manifest.json"><title>High Noon Revival — نموذج أولي</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>High Noon Revival</title>
+
 <style>
-:root{--ink:#26180f;--paper:#f2d9a3;--gold:#e8ad45;--red:#9c3f2e;--blue:#315c70}*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at top,#bd8750,#6d422b 70%,#332117);display:grid;place-items:center;padding:18px}.card{width:min(100%,520px);background:var(--paper);border:5px solid #4b2d1a;border-radius:18px;box-shadow:0 14px 40px #160d09aa;overflow:hidden}.top{padding:22px 18px;text-align:center;background:linear-gradient(#e9bd70,#c58a45);border-bottom:4px solid #704321}.eyebrow{font-size:12px;letter-spacing:2px;font-weight:800}.top h1{margin:5px 0;font-family:Georgia,serif;font-size:clamp(28px,8vw,42px);direction:ltr}.top p{margin:0;font-size:14px}.body{padding:20px}.score{display:flex;justify-content:space-between;gap:12px;margin-bottom:16px}.badge{flex:1;text-align:center;background:#fff2d4;border:2px solid #98683a;border-radius:12px;padding:10px;font-weight:800}.arena{min-height:190px;border:3px solid #754a2b;border-radius:14px;background:linear-gradient(#e9c17c 0 58%,#bd8b4f 58% 62%,#8a5934 62%);display:grid;place-items:center;text-align:center;padding:16px;position:relative;overflow:hidden}.sun{position:absolute;width:76px;height:76px;border-radius:50%;background:#f5d16e;top:18px;left:24px;opacity:.85}.message{position:relative;font-size:22px;font-weight:900;text-shadow:0 1px #fff7}.sub{display:block;font-size:13px;font-weight:600;margin-top:8px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.btn{border:0;border-radius:12px;padding:15px 10px;font-size:16px;font-weight:900;cursor:pointer;color:white;background:var(--blue);box-shadow:0 4px #1d3946}.btn.primary{background:var(--red);box-shadow:0 4px #64251c}.btn:disabled{opacity:.5;cursor:not-allowed}.result{min-height:30px;text-align:center;font-weight:800;margin:14px 0 2px}.note{font-size:12px;line-height:1.7;color:#62452d;text-align:center;margin:12px 4px 0}.footer{text-align:center;padding:10px;background:#e5c58c;font-size:11px;color:#654326}
+:root {
+  --ink:#2b180e;
+  --wood:#62351e;
+  --gold:#f1c56b;
+  --cream:#f7e8c8;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:#24170f;
+  color:var(--cream);
+  font-family:Tahoma,Arial,sans-serif;
+}
+
+button {
+  font:inherit;
+  border:2px solid #4b2816;
+  border-radius:7px;
+  background:linear-gradient(#a96a37,#70401f);
+  color:#fff0d1;
+  padding:10px 15px;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 3px #2c170d;
+}
+
+button:active {
+  transform:translateY(2px);
+}
+
+button:disabled {
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.top {
+  background:linear-gradient(#392316,#1d120c);
+  border-bottom:4px solid #9b642f;
+  padding:10px 16px;
+  display:flex;
+  gap:14px;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
+
+.brand {
+  font:bold 27px Georgia,serif;
+  color:var(--gold);
+  letter-spacing:2px;
+}
+
+.stats {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.pill {
+  background:#51301c;
+  border:1px solid #b17a3f;
+  border-radius:20px;
+  padding:7px 12px;
+  font-size:14px;
+}
+
+.wrap {
+  max-width:1050px;
+  margin:auto;
+  padding:15px;
+}
+
+.scene {
+  min-height:330px;
+  position:relative;
+  overflow:hidden;
+  border:5px solid #7c4825;
+  border-radius:12px;
+  background:linear-gradient(#d69a55 0 48%,#bd8142 49% 65%,#80502c 66%);
+}
+
+.sun {
+  position:absolute;
+  top:28px;
+  left:12%;
+  width:75px;
+  height:75px;
+  border-radius:50%;
+  background:#f6d27a;
+}
+
+.mesa {
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:115px;
+  background:linear-gradient(165deg,transparent 0 16%,#a66c3b 17% 100%);
+}
+
+.building {
+  position:absolute;
+  bottom:73px;
+  width:190px;
+  height:145px;
+  background:#9b5b2e;
+  border:5px solid #62371e;
+}
+
+.building:before {
+  content:"";
+  position:absolute;
+  top:-35px;
+  left:-13px;
+  width:calc(100% + 26px);
+  height:38px;
+  background:#65351f;
+  clip-path:polygon(0 100%,12% 0,88% 0,100% 100%);
+}
+
+.building span {
+  position:absolute;
+  top:12px;
+  left:0;
+  right:0;
+  text-align:center;
+  font:bold 17px Georgia;
+  color:#f8d99a;
+}
+
+.door {
+  position:absolute;
+  bottom:0;
+  left:70px;
+  width:48px;
+  height:85px;
+  background:#4b2818;
+  border:4px solid #d09a58;
+  border-bottom:0;
+  border-radius:24px 24px 0 0;
+}
+
+.window {
+  position:absolute;
+  bottom:50px;
+  left:15px;
+  width:38px;
+  height:40px;
+  background:#f1c86e;
+  border:5px solid #63391f;
+}
+
+.saloon { left:7%; }
+
+.shop {
+  right:7%;
+  transform:scale(.86);
+  transform-origin:bottom right;
+}
+
+.street-sign {
+  position:absolute;
+  bottom:15px;
+  left:50%;
+  transform:translateX(-50%);
+  font:bold 24px Georgia;
+  color:#ffe0a0;
+  white-space:nowrap;
+}
+
+.hero {
+  position:absolute;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:88px;
+}
+
+.scene-label {
+  position:absolute;
+  top:12px;
+  right:14px;
+  background:#442818c9;
+  padding:8px 12px;
+  border:1px solid #d7a65d;
+  border-radius:6px;
+}
+
+.nav {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:14px 0;
+}
+
+.content {
+  background:linear-gradient(#f6e7c8,#dfc18d);
+  color:var(--ink);
+  border:5px solid #744321;
+  border-radius:10px;
+  padding:17px;
+  min-height:220px;
+}
+
+h2 {
+  margin:0 0 13px;
+  color:#713d20;
+}
+
+p { line-height:1.7; }
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+  gap:12px;
+}
+
+.item {
+  background:#fff5dd;
+  border:2px solid #b98a4e;
+  border-radius:8px;
+  padding:12px;
+  text-align:center;
+}
+
+.big { font-size:48px; }
+
+.muted {
+  font-size:13px;
+  color:#765638;
+}
+
+.row {
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.hidden { display:none!important; }
+
+.notice {
+  background:#f9edcf;
+  border-right:5px solid #a34c2d;
+  padding:10px;
+  margin:10px 0;
+}
+
+#duelBox {
+  background:#382315;
+  color:#ffe9bb;
+  border-radius:8px;
+  padding:18px;
+  text-align:center;
+}
+
+#duelSignal {
+  font-size:30px;
+  color:var(--gold);
+  min-height:50px;
+  padding:8px;
+}
+
+footer {
+  text-align:center;
+  color:#c9a879;
+  font-size:12px;
+  padding:16px;
+}
+
+@media(max-width:600px) {
+  .building {
+    width:135px;
+    height:115px;
+  }
+
+  .building span { font-size:14px; }
+
+  .door {
+    left:48px;
+    width:40px;
+    height:67px;
+  }
+
+  .window {
+    width:29px;
+    height:32px;
+  }
+
+  .hero { font-size:68px; }
+
+  .scene { min-height:290px; }
+}
 </style>
 </head>
-<body><main class="card"><header class="top"><div class="eyebrow">نموذج تجريبي مستقل — المرحلة الأولى</div><h1>HIGH NOON</h1><p>مبارزة أركيد بطابع الغرب القديم</p></header><section class="body"><div class="score"><div class="badge">انتصاراتك<br><span id="wins">0</span></div><div class="badge">أفضل وقت<br><span id="best">—</span></div></div><div class="arena"><div class="sun"></div><div class="message" id="message">هل أنت مستعد؟<span class="sub">اضغط «ابدأ الجولة» وانتظر الإشارة.</span></div></div><div class="controls"><button class="btn primary" id="start">ابدأ الجولة</button><button class="btn" id="tap" disabled>اضغط عند الإشارة!</button></div><div class="result" id="result" aria-live="polite">اختبر سرعة رد فعلك.</div><p class="note">هذه نسخة أولية تجريبية: تحدّي توقيت خيالي غير واقعي. لا يوجد اتصال أونلاين أو حسابات في هذه المرحلة.</p></section><footer class="footer">High Noon Revival • مشروع تجريبي غير رسمي</footer></main>
+
+<body>
+
+<div class="top">
+  <div class="brand">HIGH NOON</div>
+
+  <div class="stats">
+    <div class="pill">⭐ المستوى: <b id="level">1</b></div>
+    <div class="pill">🪙 العملات: <b id="coins">100</b></div>
+    <div class="pill">🏆 السمعة: <b id="fame">0</b></div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section class="scene">
+
+  <div class="sun"></div>
+  <div class="mesa"></div>
+
+  <div class="building saloon">
+    <span>THE SALOON</span>
+    <div class="window"></div>
+    <div class="door"></div>
+  </div>
+
+  <div class="building shop">
+    <span>GENERAL STORE</span>
+    <div class="window"></div>
+    <div class="door"></div>
+  </div>
+
+  <div class="scene-label">بلدة غروب الشمس</div>
+
+  <div class="hero" id="hero">🤠</div>
+
+  <div class="street-sign">
+    WELCOME TO SUNSET TOWN
+  </div>
+
+</section>
+
+<nav class="nav">
+  <button class="active" data-tab="town">🏜️ البلدة</button>
+  <button data-tab="character">🤠 شخصيتي</button>
+  <button data-tab="store">🛍️ المتجر</button>
+  <button data-tab="duel">⭐ ساحة التحدي</button>
+</nav>
+
+<section class="content" id="town">
+
+  <h2>مرحبًا بك في البلدة!</h2>
+
+  <p>
+    تجوّل في البلدة، جهّز شخصيتك،
+    واجمع العملات والسمعة من التحديات.
+  </p>
+
+  <div class="grid">
+
+    <div class="item">
+      <div class="big">🏠</div>
+      <b>الصالون</b>
+      <p class="muted">مكان تجمع أهل البلدة.</p>
+      <button onclick="showTab('duel')">
+        دخول ساحة التحدي
+      </button>
+    </div>
+
+    <div class="item">
+      <div class="big">🏪</div>
+      <b>المتجر العام</b>
+      <p class="muted">اختر قبعة جديدة.</p>
+      <button onclick="showTab('store')">
+        زيارة المتجر
+      </button>
+    </div>
+
+    <div class="item">
+      <div class="big">🧍</div>
+      <b>ملف الشخصية</b>
+      <p class="muted">غيّر مظهرك واسمك.</p>
+      <button onclick="showTab('character')">
+        تخصيص الشخصية
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<section class="content hidden" id="character">
+
+  <h2>شخصيتي</h2>
+
+  <div class="row">
+    <label>
+      اسم اللاعب:
+      <input id="player" value="راعي البلدة" maxlength="18">
+    </label>
+
+    <button onclick="saveName()">حفظ الاسم</button>
+  </div>
+
+  <p>اختر مظهرك:</p>
+
+  <div class="grid">
+
+    <div class="item">
+      <div class="big">🤠</div>
+      <b>راعي بقر</b><br>
+      <button onclick="chooseLook('🤠')">اختيار</button>
+    </div>
+
+    <div class="item">
+      <div class="big">🧑‍🌾</div>
+      <b>مستكشف</b><br>
+      <button onclick="chooseLook('🧑‍🌾')">اختيار</button>
+    </div>
+
+    <div class="item">
+      <div class="big">👩‍🌾</div>
+      <b>فارسة</b><br>
+      <button onclick="chooseLook('👩‍🌾')">اختيار</button>
+    </div>
+
+    <div class="item">
+      <div class="big">🤠</div>
+      <b>قبعة داكنة</b><br>
+      <button onclick="chooseLook('🤠')">اختيار</button>
+    </div>
+
+  </div>
+
+  <div class="notice">
+    اختيار المظهر يغيّر رمز الشخصية في مشهد البلدة.
+  </div>
+
+</section>
+
+<section class="content hidden" id="store">
+
+  <h2>المتجر العام</h2>
+
+  <p>اشترِ عناصر تجميلية باستخدام العملات التجريبية.</p>
+
+  <div class="grid">
+
+    <div class="item">
+      <div class="big">🤠</div>
+      <b>قبعة بنية</b>
+      <p>30 🪙</p>
+      <button onclick="buy(30,'تم شراء القبعة البنية!')">
+        شراء
+      </button>
+    </div>
+
+    <div class="item">
+      <div class="big">🧣</div>
+      <b>وشاح أحمر</b>
+      <p>25 🪙</p>
+      <button onclick="buy(25,'تم شراء الوشاح الأحمر!')">
+        شراء
+      </button>
+    </div>
+
+    <div class="item">
+      <div class="big">🥾</div>
+      <b>حذاء مغامر</b>
+      <p>40 🪙</p>
+      <button onclick="buy(40,'تم شراء حذاء المغامر!')">
+        شراء
+      </button>
+    </div>
+
+  </div>
+
+  <p id="shopMsg" class="notice">
+    رصيدك 100 عملة تجريبية.
+  </p>
+
+</section>
+
+<section class="content hidden" id="duel">
+
+  <h2>ساحة التحدي</h2>
+
+  <p>
+    انتظر ظهور الإشارة ثم اضغط الزر.
+    هذه المرحلة محلية على جهازك وليست مبارزة أونلاين.
+  </p>
+
+  <div id="duelBox">
+
+    <div id="duelSignal">هل أنت مستعد؟</div>
+
+    <div id="duelResult">
+      ابدأ عندما تكون جاهزًا.
+    </div>
+
+    <div class="row" style="justify-content:center;margin-top:12px">
+      <button id="begin">ابدأ التحدي</button>
+      <button id="react" disabled>الآن!</button>
+    </div>
+
+  </div>
+
+</section>
+
+<footer>
+  نسخة تجريبية غير رسمية.
+  الرسومات هنا رمزية وليست ملفات اللعبة الأصلية.
+  اللعب الجماعي والغرف الخاصة لم تُضف بعد.
+</footer>
+
+</main>
+
 <script>
-const $=id=>document.getElementById(id);let timer=null,readyAt=0,state='idle',wins=0,best=null;function reset(){clearTimeout(timer);state='idle';$('tap').disabled=true;$('start').disabled=false;$('message').innerHTML='هل أنت مستعد؟<span class="sub">اضغط «ابدأ الجولة» وانتظر الإشارة.</span>'}
-$('start').addEventListener('click',()=>{if(state!=='idle')return;state='waiting';$('start').disabled=true;$('tap').disabled=true;$('result').textContent='ترقّب... لا تضغط قبل الإشارة!';$('message').innerHTML='ثبات...<span class="sub">انتظر ظهور كلمة «الآن»</span>';const delay=1400+Math.random()*2800;timer=setTimeout(()=>{state='go';readyAt=performance.now();$('message').innerHTML='الآن!<span class="sub">اضغط الزر الآخر بسرعة</span>';$('tap').disabled=false},delay)});
-$('tap').addEventListener('click',()=>{if(state==='waiting'){$('result').textContent='مبكر جدًا! انتظر الإشارة ثم حاول مجددًا.';reset();return}if(state!=='go')return;const ms=Math.round(performance.now()-readyAt);wins++;if(best===null||ms<best)best=ms;$('wins').textContent=wins;$('best').textContent=best+' ms';$('result').textContent=`أحسنت! زمن الاستجابة: ${ms} مللي ثانية.`;$('message').innerHTML='فزت بالجولة!<span class="sub">هل نعيد المحاولة؟</span>';reset();$('message').innerHTML='فزت بالجولة!<span class="sub">اضغط «ابدأ الجولة» للعب مجددًا.</span>'});
-if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
-</script></body></html>
+
+let coins=100;
+let fame=0;
+let look='🤠';
+let wait=false;
+let signalAt=0;
+let delayId;
+
+const coinsEl=document.getElementById('coins');
+const fameEl=document.getElementById('fame');
+
+function showTab(id) {
+
+  document.querySelectorAll('.content')
+    .forEach(x=>x.classList.add('hidden'));
+
+  document.getElementById(id)
+    .classList.remove('hidden');
+
+  document.querySelectorAll('.nav button')
+    .forEach(b=>{
+      b.classList.toggle(
+        'active',
+        b.dataset.tab===id
+      );
+    });
+}
+
+document.querySelectorAll('.nav button')
+.forEach(b=>{
+  b.addEventListener('click',()=>{
+    showTab(b.dataset.tab);
+  });
+});
+
+function chooseLook(x) {
+  look=x;
+  document.getElementById('hero').textContent=x;
+}
+
+function saveName() {
+  let v=document.getElementById('player').value.trim();
+
+  if(v) {
+    alert('تم حفظ الاسم: '+v);
+  }
+}
+
+function buy(cost,msg) {
+
+  let out=document.getElementById('shopMsg');
+
+  if(coins<cost) {
+    out.textContent='عملاتك لا تكفي لهذا العنصر.';
+    return;
+  }
+
+  coins-=cost;
+  coinsEl.textContent=coins;
+
+  out.textContent=msg+' (العنصر تجميلي تجريبي).';
+}
+
+document.getElementById('begin')
+.addEventListener('click',()=>{
+
+  clearTimeout(delayId);
+
+  wait=true;
+  signalAt=0;
+
+  let s=document.getElementById('duelSignal');
+  let r=document.getElementById('duelResult');
+  let b=document.getElementById('begin');
+  let a=document.getElementById('react');
+
+  s.textContent='انتظر الإشارة...';
+  r.textContent='لا تضغط قبل ظهور «الآن!»';
+
+  b.disabled=true;
+  a.disabled=true;
+
+  delayId=setTimeout(()=>{
+
+    if(!wait)return;
+
+    signalAt=performance.now();
+    s.textContent='الآن!';
+    a.disabled=false;
+
+  },1000+Math.random()*2500);
+
+});
+
+document.getElementById('react')
+.addEventListener('click',()=>{
+
+  if(!wait)return;
+
+  let s=document.getElementById('duelSignal');
+  let r=document.getElementById('duelResult');
+  let b=document.getElementById('begin');
+  let a=document.getElementById('react');
+
+  if(!signalAt) {
+
+    clearTimeout(delayId);
+    wait=false;
+
+    s.textContent='تسرّعت!';
+    r.textContent='انتظر الإشارة وحاول مرة أخرى.';
+
+    b.disabled=false;
+    a.disabled=true;
+
+    return;
+  }
+
+  let ms=Math.round(performance.now()-signalAt);
+
+  wait=false;
+  a.disabled=true;
+  b.disabled=false;
+
+  coins+=10;
+  fame+=1;
+
+  coinsEl.textContent=coins;
+  fameEl.textContent=fame;
+
+  s.textContent='أحسنت!';
+
+  r.textContent=
+    'زمن استجابتك '+ms+
+    ' مللي ثانية. حصلت على 10 عملات ونقطة سمعة.';
+
+});
+
+</script>
+
+</body>
+</html>
