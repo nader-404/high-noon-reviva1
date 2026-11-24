@@ -1,298 +1,364 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>High Noon - Demo</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;overflow:hidden;background:#87b9d7;font-family:Arial;color:white;touch-action:none}
-canvas{display:block}
-#hud{position:fixed;top:12px;right:12px;z-index:5;background:#24180dcc;padding:10px 15px;border-radius:12px;font-weight:bold}
-#help{position:fixed;top:12px;left:12px;z-index:5;background:#24180dcc;padding:9px;border-radius:10px;font-size:12px}
-#controls{position:fixed;inset:0;pointer-events:none;z-index:10}
-#stick{position:absolute;bottom:25px;left:22px;width:125px;height:125px;border-radius:50%;background:#ffffff35;border:2px solid #ffffff90;pointer-events:auto;touch-action:none}
-#knob{position:absolute;width:52px;height:52px;left:35px;top:35px;border-radius:50%;background:#ffffffbb;border:2px solid white}
-.action{position:absolute;right:20px;width:78px;height:65px;border:2px solid white;border-radius:15px;color:white;font-weight:bold;font-size:15px;background:#382313d9;pointer-events:auto;touch-action:none}
-#jump{bottom:105px}
-#fire{bottom:25px;background:#9b3e18e8}
-#start{position:fixed;z-index:20;top:50%;left:50%;transform:translate(-50%,-50%);padding:16px 28px;border:0;border-radius:14px;background:#8c4b20;color:white;font-size:20px;font-weight:bold}
-#message{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:8;color:white;font-weight:bold;text-shadow:1px 2px 4px black}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>High Noon - مبارزة الغرب</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, Arial, sans-serif; }
+    body {
+      background: linear-gradient(180deg, #ff5e1a 0%, #c92a0a 55%, #1a0702 100%);
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* شمس الغروب */
+    .sun {
+      position: absolute;
+      top: 18%;
+      width: 220px;
+      height: 220px;
+      background: rgba(255, 220, 130, 0.35);
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    /* الشريط العلوي */
+    .hud {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+      z-index: 2;
+    }
+    .stats {
+      background: rgba(0, 0, 0, 0.55);
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      width: 46%;
+    }
+    .bar-bg {
+      width: 100%;
+      height: 12px;
+      background: #333;
+      border-radius: 6px;
+      margin: 6px 0;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: #2ecc71;
+      transition: width 0.2s;
+    }
+    .enemy-fill { background: #e74c3c; }
+    .ammo { font-size: 14px; color: #ffd166; margin-top: 4px; }
+
+    /* ساحة المبارزة */
+    .arena {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+    }
+    .status-banner {
+      font-size: 28px;
+      font-weight: bold;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.8);
+      margin-bottom: 25px;
+      text-align: center;
+      min-height: 40px;
+    }
+
+    /* الشخصيات بأسلوب الظل */
+    .fighters {
+      width: 85%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      height: 180px;
+      border-bottom: 6px solid #111;
+      padding: 0 20px;
+    }
+    .cowboy {
+      width: 70px;
+      height: 140px;
+      background: #111;
+      border-radius: 30px 30px 5px 5px;
+      position: relative;
+      transition: transform 0.15s ease, opacity 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 13px;
+      color: #aaa;
+    }
+    /* قبعة الكاوبوي */
+    .cowboy::before {
+      content: "";
+      position: absolute;
+      top: -14px;
+      width: 95px;
+      height: 10px;
+      background: #111;
+      border-radius: 5px;
+    }
+    .cowboy::after {
+      content: "";
+      position: absolute;
+      top: -28px;
+      width: 50px;
+      height: 18px;
+      background: #111;
+      border-radius: 10px 10px 0 0;
+    }
+    .dodging {
+      transform: translateY(35px) rotate(-18deg);
+      opacity: 0.7;
+    }
+    .enemy.dodging {
+      transform: translateY(35px) rotate(18deg);
+    }
+    .hit-flash {
+      background: #ff0000 !important;
+    }
+
+    /* أزرار التحكم */
+    .controls {
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      z-index: 2;
+      background: rgba(0,0,0,0.75);
+    }
+    button {
+      padding: 16px 10px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #fff;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    button:active { transform: scale(0.95); }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-shoot { background: #d62828; }
+    .btn-dodge { background: #f77f00; }
+    .btn-reload { background: #2a9d8f; }
+    .btn-start {
+      grid-column: span 3;
+      background: #ffb703;
+      color: #111;
+    }
+  </style>
 </head>
 <body>
-<div id="hud">🪙 العملات: <span id="coins">100</span></div>
-<div id="help">اسحب الشاشة للنظر حولك</div>
-<div id="message"></div>
-<button id="start">ابدأ اللعبة</button>
-<div id="controls">
-  <div id="stick"><div id="knob"></div></div>
-  <button class="action" id="jump">⬆ قفز</button>
-  <button class="action" id="fire">✨ إطلاق</button>
-</div>
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x91c5df);
-scene.fog = new THREE.Fog(0x91c5df, 35, 115);
-const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 200);
-camera.position.set(0, 2, 8);
-const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(innerWidth,innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-document.body.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xffffff,0x8b6848,2));
-const sun = new THREE.DirectionalLight(0xffffff,2);
-sun.position.set(-10,20,10);
-scene.add(sun);
-const material = (color)=>new THREE.MeshStandardMaterial({color});
-const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(200,200),
-  material(0xc49a62)
-);
-ground.rotation.x=-Math.PI/2;
-ground.position.y=0;
-scene.add(ground);
-function box(x,y,z,w,h,d,color){
- const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material(color));
- m.position.set(x,y,z);
- scene.add(m);
- return m;
-}
-// الطريق
-box(0,0.015,-25,9,0.03,100,0x9b805e);
-// مباني البلدة
-for(let i=0;i<12;i++){
- const side=i%2===0?-1:1;
- const z=-i*8-5;
- const x=side*(8+Math.random()*3);
- const width=4+Math.random()*2;
- const height=4+Math.random()*3;
- box(x,height/2,z,width,height,5,0x9b5936);
- box(x,height+0.15,z,width+0.4,0.35,5.4,0x503126);
- box(x,1.2,z-2.56,1.2,2.4,0x453027);
- box(x,2.7,z-2.58,1.1,0.3,0x3c281f);
-}
-// براميل
-for(let i=0;i<10;i++){
- const barrel=new THREE.Mesh(
-  new THREE.CylinderGeometry(0.55,0.55,1.1,16),
-  material(0x76502e)
- );
- barrel.position.set(i%2===0?-5:5,0.55,-i*8-4);
- scene.add(barrel);
-}
-// تلال بعيدة
-for(let i=0;i<9;i++){
- const hill=new THREE.Mesh(
-  new THREE.SphereGeometry(1,16,12),
-  material(0x9d9862)
- );
- hill.scale.set(8,4,5);
- hill.position.set(i*15-60,1,-48);
- scene.add(hill);
-}
-// شخصية هدف خيالية
-const target=new THREE.Group();
-const body=new THREE.Mesh(
- new THREE.CylinderGeometry(0.55,0.7,1.5,12),
- material(0x315b73)
-);
-body.position.y=1.3;
-target.add(body);
-const head=new THREE.Mesh(
- new THREE.SphereGeometry(0.48,16,16),
- material(0xd5a77d)
-);
-head.position.y=2.35;
-target.add(head);
-const hat=new THREE.Mesh(
- new THREE.CylinderGeometry(0.8,0.8,0.15,16),
- material(0x38251b)
-);
-hat.position.y=2.8;
-target.add(hat);
-target.position.set(0,0,-23);
-scene.add(target);
-// الأداة الخيالية أمام الكاميرا
-const gadget=new THREE.Group();
-const gadgetBody=new THREE.Mesh(
- new THREE.BoxGeometry(0.22,0.25,0.65),
- material(0x394b5a)
-);
-gadget.add(gadgetBody);
-const glow=new THREE.Mesh(
- new THREE.SphereGeometry(0.13,16,16),
- new THREE.MeshBasicMaterial({color:0x55eaff})
-);
-glow.position.z=-0.35;
-gadget.add(glow);
-const ring=new THREE.Mesh(
- new THREE.TorusGeometry(0.16,0.035,8,20),
- new THREE.MeshBasicMaterial({color:0x55eaff})
-);
-ring.position.z=-0.38;
-gadget.add(ring);
-camera.add(gadget);
-gadget.position.set(0.48,-0.42,-0.8);
-scene.add(camera);
-// العملات المحلية
-let coins=Number(localStorage.getItem('hn_demo_coins')||100);
-document.getElementById('coins').textContent=coins;
-function addCoins(amount){
- coins+=amount;
- localStorage.setItem('hn_demo_coins',coins);
- document.getElementById('coins').textContent=coins;
-}
-// عصا التحكم
-const stick=document.getElementById('stick');
-const knob=document.getElementById('knob');
-let stickX=0,stickY=0,stickActive=false;
-function moveStick(e){
- const r=stick.getBoundingClientRect();
- const cx=r.left+r.width/2;
- const cy=r.top+r.height/2;
- let dx=e.clientX-cx;
- let dy=e.clientY-cy;
- const max=38;
- const len=Math.hypot(dx,dy);
- if(len>max){dx=dx/len*max;dy=dy/len*max}
- stickX=dx/max;
- stickY=dy/max;
- knob.style.left=(35+dx)+'px';
- knob.style.top=(35+dy)+'px';
-}
-stick.addEventListener('pointerdown',e=>{
- stickActive=true;
- stick.setPointerCapture(e.pointerId);
- moveStick(e);
-});
-stick.addEventListener('pointermove',e=>{
- if(stickActive)moveStick(e);
-});
-function resetStick(){
- stickActive=false;
- stickX=0;
- stickY=0;
- knob.style.left='35px';
- knob.style.top='35px';
-}
-stick.addEventListener('pointerup',resetStick);
-stick.addEventListener('pointercancel',resetStick);
-// النظر بالسحب
-let lookActive=false,lastX=0,lastY=0;
-renderer.domElement.addEventListener('pointerdown',e=>{
- lookActive=true;
- lastX=e.clientX;
- lastY=e.clientY;
-});
-renderer.domElement.addEventListener('pointermove',e=>{
- if(!lookActive)return;
- const dx=e.clientX-lastX;
- const dy=e.clientY-lastY;
- camera.rotation.order='YXZ';
- camera.rotation.y-=dx*0.004;
- camera.rotation.x-=dy*0.003;
- camera.rotation.x=Math.max(-1.2,Math.min(1.2,camera.rotation.x));
- lastX=e.clientX;
- lastY=e.clientY;
-});
-window.addEventListener('pointerup',()=>lookActive=false);
-// القفز
-let jumpVelocity=0;
-let playerHeight=2;
-let jumping=false;
-function jump(){
- if(!jumping){
-  jumpVelocity=0.18;
-  jumping=true;
- }
-}
-document.getElementById('jump').addEventListener('pointerdown',jump);
-// إطلاق كرات طاقة خيالية
-const projectiles=[];
-function fire(){
- const orb=new THREE.Mesh(
-  new THREE.SphereGeometry(0.16,12,12),
-  new THREE.MeshBasicMaterial({color:0x45eaff})
- );
- const direction=new THREE.Vector3();
- camera.getWorldDirection(direction);
- orb.position.copy(camera.position).add(direction.clone().multiplyScalar(1));
- orb.userData.velocity=direction.multiplyScalar(0.65);
- orb.userData.life=100;
- scene.add(orb);
- projectiles.push(orb);
- document.getElementById('message').textContent='✨ انطلقت كرة الطاقة!';
- setTimeout(()=>document.getElementById('message').textContent='',900);
-}
-document.getElementById('fire').addEventListener('pointerdown',fire);
-// بدء اللعبة
-let started=false;
-document.getElementById('start').addEventListener('click',()=>{
- started=true;
- document.getElementById('start').style.display='none';
-});
-// الحركة
-const clock=new THREE.Clock();
-function animate(){
- requestAnimationFrame(animate);
- const dt=Math.min(clock.getDelta(),0.04);
- if(started){
-  const speed=7*dt;
-  const forward=new THREE.Vector3();
-  camera.getWorldDirection(forward);
-  forward.y=0;
-  forward.normalize();
-  const right=new THREE.Vector3().crossVectors(forward,new THREE.Vector3(0,1,0)).normalize();
-  camera.position.addScaledVector(forward,-stickY*speed);
-  camera.position.addScaledVector(right,stickX*speed);
-  // القفز
-  if(jumping){
-   playerHeight+=jumpVelocity;
-   jumpVelocity-=0.012;
-   if(playerHeight<=2){
-    playerHeight=2;
-    jumping=false;
-    jumpVelocity=0;
-   }
-   camera.position.y=playerHeight;
-  }
- }
- // حركة كرات الطاقة
- for(let i=projectiles.length-1;i>=0;i--){
-  const p=projectiles[i];
-  p.position.add(p.userData.velocity);
-  p.userData.life--;
-  if(p.position.distanceTo(target.position.clone().add(new THREE.Vector3(0,1.5,0)))<1.2){
-   target.children.forEach(part=>{
-    part.material.color.setHex(0x55ddee);
-   });
-   addCoins(5);
-   document.getElementById('message').textContent='أصبت الهدف! +5 عملات';
-   setTimeout(()=>{
-    target.children.forEach((part,index)=>{
-     part.material.color.setHex(index===0?0x315b73:index===1?0xd5a77d:0x38251b);
-    });
-    document.getElementById('message').textContent='';
-   },700);
-   scene.remove(p);
-   projectiles.splice(i,1);
-  }else if(p.userData.life<=0){
-   scene.remove(p);
-   projectiles.splice(i,1);
-  }
- }
- // حركة بسيطة للهدف
- target.position.y=Math.sin(performance.now()*0.002)*0.08;
- renderer.render(scene,camera);
-}
-animate();
-window.addEventListener('resize',()=>{
- camera.aspect=innerWidth/innerHeight;
- camera.updateProjectionMatrix();
- renderer.setSize(innerWidth,innerHeight);
-});
-</script>
+
+  <div class="sun"></div>
+
+  <div class="hud">
+    <div class="stats">
+      <div>أنت (البطل)</div>
+      <div class="bar-bg"><div id="playerHpBar" class="bar-fill" style="width: 100%;"></div></div>
+      <div id="playerAmmo" class="ammo">الطلقات: ●●●●●● (6/6)</div>
+    </div>
+
+    <div class="stats">
+      <div>الخصم</div>
+      <div class="bar-bg"><div id="enemyHpBar" class="bar-fill enemy-fill" style="width: 100%;"></div></div>
+      <div id="enemyAmmo" class="ammo">الطلقات: ●●●●●● (6/6)</div>
+    </div>
+  </div>
+
+  <div class="arena">
+    <div id="banner" class="status-banner">اضغط "ابدأ المبارزة" للاستعداد!</div>
+    <div class="fighters">
+      <div id="playerModel" class="cowboy">أنت</div>
+      <div id="enemyModel" class="cowboy enemy">الخصم</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="shootBtn" class="btn-shoot" onclick="playerShoot()" disabled>🔥 إطلاق نار</button>
+    <button id="dodgeBtn" class="btn-dodge" onclick="playerDodge()" disabled>🛡️ مراوغة</button>
+    <button id="reloadBtn" class="btn-reload" onclick="playerReload()" disabled>🔄 تعبئة</button>
+    <button id="startBtn" class="btn-start" onclick="startDuel()">ابدأ المبارزة</button>
+  </div>
+
+  <script>
+    let player = { hp: 100, ammo: 6, dodging: false };
+    let enemy = { hp: 100, ammo: 6, dodging: false };
+    let canAct = false;
+    let gameOver = false;
+    let aiInterval = null;
+    let drawTimeout = null;
+
+    const banner = document.getElementById("banner");
+    const playerHpBar = document.getElementById("playerHpBar");
+    const enemyHpBar = document.getElementById("enemyHpBar");
+    const playerAmmoText = document.getElementById("playerAmmo");
+    const enemyAmmoText = document.getElementById("enemyAmmo");
+    const playerModel = document.getElementById("playerModel");
+    const enemyModel = document.getElementById("enemyModel");
+
+    const shootBtn = document.getElementById("shootBtn");
+    const dodgeBtn = document.getElementById("dodgeBtn");
+    const reloadBtn = document.getElementById("reloadBtn");
+    const startBtn = document.getElementById("startBtn");
+
+    function updateUI() {
+      playerHpBar.style.width = Math.max(0, player.hp) + "%";
+      enemyHpBar.style.width = Math.max(0, enemy.hp) + "%";
+      playerAmmoText.textContent = `الطلقات: ${"●".repeat(player.ammo)}${"○".repeat(6 - player.ammo)} (${player.ammo}/6)`;
+      enemyAmmoText.textContent = `الطلقات: ${"●".repeat(enemy.ammo)}${"○".repeat(6 - enemy.ammo)} (${enemy.ammo}/6)`;
+    }
+
+    function setButtons(enabled) {
+      shootBtn.disabled = !enabled;
+      dodgeBtn.disabled = !enabled;
+      reloadBtn.disabled = !enabled;
+    }
+
+    function startDuel() {
+      clearInterval(aiInterval);
+      clearTimeout(drawTimeout);
+
+      player = { hp: 100, ammo: 6, dodging: false };
+      enemy = { hp: 100, ammo: 6, dodging: false };
+      canAct = false;
+      gameOver = false;
+
+      playerModel.classList.remove("dodging", "hit-flash");
+      enemyModel.classList.remove("dodging", "hit-flash");
+      updateUI();
+      setButtons(false);
+      startBtn.style.display = "none";
+
+      banner.textContent = "استعد... لا تتحرك!";
+      const waitTime = Math.floor(Math.random() * 2500) + 1500;
+
+      drawTimeout = setTimeout(() => {
+        banner.textContent = "⚡ اسحب سلاحك الآن! (DRAW) ⚡";
+        canAct = true;
+        setButtons(true);
+        startAI();
+      }, waitTime);
+    }
+
+    function flashHit(element) {
+      element.classList.add("hit-flash");
+      setTimeout(() => element.classList.remove("hit-flash"), 180);
+    }
+
+    function playerShoot() {
+      if (!canAct || gameOver || player.dodging) return;
+      if (player.ammo <= 0) {
+        banner.textContent = "الذخيرة فارغة! اضغط تعبئة 🔄";
+        return;
+      }
+
+      player.ammo--;
+      if (enemy.dodging) {
+        banner.textContent = "الخصم راوغ طلقتك!";
+      } else {
+        enemy.hp -= 25;
+        flashHit(enemyModel);
+        banner.textContent = "إصابة مباشرة في الخصم! 💥";
+      }
+      updateUI();
+      checkWinner();
+    }
+
+    function playerDodge() {
+      if (!canAct || gameOver || player.dodging) return;
+      player.dodging = true;
+      playerModel.classList.add("dodging");
+      banner.textContent = "أنت تراوغ... 🛡️";
+
+      setTimeout(() => {
+        player.dodging = false;
+        playerModel.classList.remove("dodging");
+      }, 650);
+    }
+
+    function playerReload() {
+      if (!canAct || gameOver || player.dodging) return;
+      if (player.ammo === 6) return;
+      player.ammo = 6;
+      banner.textContent = "تمت تعبئة المسدس بالكامل 🔄";
+      updateUI();
+    }
+
+    function startAI() {
+      aiInterval = setInterval(() => {
+        if (gameOver || !canAct) return;
+
+        // قرارات الخصم
+        if (enemy.ammo === 0) {
+          enemy.ammo = 6;
+          banner.textContent = "الخصم يعيد تعبئة سلاحه!";
+          updateUI();
+          return;
+        }
+
+        const action = Math.random();
+        if (action < 0.6 && !enemy.dodging) {
+          // الخصم يطلق النار
+          enemy.ammo--;
+          if (player.dodging) {
+            banner.textContent = "مراوغة ناجحة! تفاديت رصاصة الخصم 🛡️";
+          } else {
+            player.hp -= 25;
+            flashHit(playerModel);
+            banner.textContent = "تلقيت إصابة من الخصم! 🩸";
+          }
+          updateUI();
+          checkWinner();
+        } else if (action >= 0.6 && action < 0.85 && !enemy.dodging) {
+          // الخصم يراوغ
+          enemy.dodging = true;
+          enemyModel.classList.add("dodging");
+          setTimeout(() => {
+            enemy.dodging = false;
+            enemyModel.classList.remove("dodging");
+          }, 650);
+        }
+      }, 900);
+    }
+
+    function checkWinner() {
+      if (enemy.hp <= 0) {
+        endGame("🏆 فزت بالمبارزة!");
+      } else if (player.hp <= 0) {
+        endGame("💀 خسرت المبارزة!");
+      }
+    }
+
+    function endGame(message) {
+      gameOver = true;
+      canAct = false;
+      clearInterval(aiInterval);
+      setButtons(false);
+      banner.textContent = message;
+      startBtn.textContent = "العب مرة ثانية";
+      startBtn.style.display = "block";
+    }
+  </script>
 </body>
 </html>
