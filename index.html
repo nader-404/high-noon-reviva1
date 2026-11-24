@@ -1,664 +1,298 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>High Noon Revival</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>High Noon - Demo</title>
 <style>
-:root {
-  --ink:#2b180e;
-  --wood:#62351e;
-  --gold:#f1c56b;
-  --cream:#f7e8c8;
-}
-
-* { box-sizing:border-box; }
-
-body {
-  margin:0;
-  background:#24170f;
-  color:var(--cream);
-  font-family:Tahoma,Arial,sans-serif;
-}
-
-button {
-  font:inherit;
-  border:2px solid #4b2816;
-  border-radius:7px;
-  background:linear-gradient(#a96a37,#70401f);
-  color:#fff0d1;
-  padding:10px 15px;
-  font-weight:bold;
-  cursor:pointer;
-  box-shadow:0 3px #2c170d;
-}
-
-button:active {
-  transform:translateY(2px);
-}
-
-button:disabled {
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.top {
-  background:linear-gradient(#392316,#1d120c);
-  border-bottom:4px solid #9b642f;
-  padding:10px 16px;
-  display:flex;
-  gap:14px;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-}
-
-.brand {
-  font:bold 27px Georgia,serif;
-  color:var(--gold);
-  letter-spacing:2px;
-}
-
-.stats {
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.pill {
-  background:#51301c;
-  border:1px solid #b17a3f;
-  border-radius:20px;
-  padding:7px 12px;
-  font-size:14px;
-}
-
-.wrap {
-  max-width:1050px;
-  margin:auto;
-  padding:15px;
-}
-
-.scene {
-  min-height:330px;
-  position:relative;
-  overflow:hidden;
-  border:5px solid #7c4825;
-  border-radius:12px;
-  background:linear-gradient(#d69a55 0 48%,#bd8142 49% 65%,#80502c 66%);
-}
-
-.sun {
-  position:absolute;
-  top:28px;
-  left:12%;
-  width:75px;
-  height:75px;
-  border-radius:50%;
-  background:#f6d27a;
-}
-
-.mesa {
-  position:absolute;
-  bottom:0;
-  left:0;
-  width:100%;
-  height:115px;
-  background:linear-gradient(165deg,transparent 0 16%,#a66c3b 17% 100%);
-}
-
-.building {
-  position:absolute;
-  bottom:73px;
-  width:190px;
-  height:145px;
-  background:#9b5b2e;
-  border:5px solid #62371e;
-}
-
-.building:before {
-  content:"";
-  position:absolute;
-  top:-35px;
-  left:-13px;
-  width:calc(100% + 26px);
-  height:38px;
-  background:#65351f;
-  clip-path:polygon(0 100%,12% 0,88% 0,100% 100%);
-}
-
-.building span {
-  position:absolute;
-  top:12px;
-  left:0;
-  right:0;
-  text-align:center;
-  font:bold 17px Georgia;
-  color:#f8d99a;
-}
-
-.door {
-  position:absolute;
-  bottom:0;
-  left:70px;
-  width:48px;
-  height:85px;
-  background:#4b2818;
-  border:4px solid #d09a58;
-  border-bottom:0;
-  border-radius:24px 24px 0 0;
-}
-
-.window {
-  position:absolute;
-  bottom:50px;
-  left:15px;
-  width:38px;
-  height:40px;
-  background:#f1c86e;
-  border:5px solid #63391f;
-}
-
-.saloon { left:7%; }
-
-.shop {
-  right:7%;
-  transform:scale(.86);
-  transform-origin:bottom right;
-}
-
-.street-sign {
-  position:absolute;
-  bottom:15px;
-  left:50%;
-  transform:translateX(-50%);
-  font:bold 24px Georgia;
-  color:#ffe0a0;
-  white-space:nowrap;
-}
-
-.hero {
-  position:absolute;
-  bottom:18px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:88px;
-}
-
-.scene-label {
-  position:absolute;
-  top:12px;
-  right:14px;
-  background:#442818c9;
-  padding:8px 12px;
-  border:1px solid #d7a65d;
-  border-radius:6px;
-}
-
-.nav {
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin:14px 0;
-}
-
-.content {
-  background:linear-gradient(#f6e7c8,#dfc18d);
-  color:var(--ink);
-  border:5px solid #744321;
-  border-radius:10px;
-  padding:17px;
-  min-height:220px;
-}
-
-h2 {
-  margin:0 0 13px;
-  color:#713d20;
-}
-
-p { line-height:1.7; }
-
-.grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
-  gap:12px;
-}
-
-.item {
-  background:#fff5dd;
-  border:2px solid #b98a4e;
-  border-radius:8px;
-  padding:12px;
-  text-align:center;
-}
-
-.big { font-size:48px; }
-
-.muted {
-  font-size:13px;
-  color:#765638;
-}
-
-.row {
-  display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-
-.hidden { display:none!important; }
-
-.notice {
-  background:#f9edcf;
-  border-right:5px solid #a34c2d;
-  padding:10px;
-  margin:10px 0;
-}
-
-#duelBox {
-  background:#382315;
-  color:#ffe9bb;
-  border-radius:8px;
-  padding:18px;
-  text-align:center;
-}
-
-#duelSignal {
-  font-size:30px;
-  color:var(--gold);
-  min-height:50px;
-  padding:8px;
-}
-
-footer {
-  text-align:center;
-  color:#c9a879;
-  font-size:12px;
-  padding:16px;
-}
-
-@media(max-width:600px) {
-  .building {
-    width:135px;
-    height:115px;
-  }
-
-  .building span { font-size:14px; }
-
-  .door {
-    left:48px;
-    width:40px;
-    height:67px;
-  }
-
-  .window {
-    width:29px;
-    height:32px;
-  }
-
-  .hero { font-size:68px; }
-
-  .scene { min-height:290px; }
-}
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;background:#87b9d7;font-family:Arial;color:white;touch-action:none}
+canvas{display:block}
+#hud{position:fixed;top:12px;right:12px;z-index:5;background:#24180dcc;padding:10px 15px;border-radius:12px;font-weight:bold}
+#help{position:fixed;top:12px;left:12px;z-index:5;background:#24180dcc;padding:9px;border-radius:10px;font-size:12px}
+#controls{position:fixed;inset:0;pointer-events:none;z-index:10}
+#stick{position:absolute;bottom:25px;left:22px;width:125px;height:125px;border-radius:50%;background:#ffffff35;border:2px solid #ffffff90;pointer-events:auto;touch-action:none}
+#knob{position:absolute;width:52px;height:52px;left:35px;top:35px;border-radius:50%;background:#ffffffbb;border:2px solid white}
+.action{position:absolute;right:20px;width:78px;height:65px;border:2px solid white;border-radius:15px;color:white;font-weight:bold;font-size:15px;background:#382313d9;pointer-events:auto;touch-action:none}
+#jump{bottom:105px}
+#fire{bottom:25px;background:#9b3e18e8}
+#start{position:fixed;z-index:20;top:50%;left:50%;transform:translate(-50%,-50%);padding:16px 28px;border:0;border-radius:14px;background:#8c4b20;color:white;font-size:20px;font-weight:bold}
+#message{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:8;color:white;font-weight:bold;text-shadow:1px 2px 4px black}
 </style>
 </head>
-
 <body>
-
-<div class="top">
-  <div class="brand">HIGH NOON</div>
-
-  <div class="stats">
-    <div class="pill">⭐ المستوى: <b id="level">1</b></div>
-    <div class="pill">🪙 العملات: <b id="coins">100</b></div>
-    <div class="pill">🏆 السمعة: <b id="fame">0</b></div>
-  </div>
+<div id="hud">🪙 العملات: <span id="coins">100</span></div>
+<div id="help">اسحب الشاشة للنظر حولك</div>
+<div id="message"></div>
+<button id="start">ابدأ اللعبة</button>
+<div id="controls">
+  <div id="stick"><div id="knob"></div></div>
+  <button class="action" id="jump">⬆ قفز</button>
+  <button class="action" id="fire">✨ إطلاق</button>
 </div>
-
-<main class="wrap">
-
-<section class="scene">
-
-  <div class="sun"></div>
-  <div class="mesa"></div>
-
-  <div class="building saloon">
-    <span>THE SALOON</span>
-    <div class="window"></div>
-    <div class="door"></div>
-  </div>
-
-  <div class="building shop">
-    <span>GENERAL STORE</span>
-    <div class="window"></div>
-    <div class="door"></div>
-  </div>
-
-  <div class="scene-label">بلدة غروب الشمس</div>
-
-  <div class="hero" id="hero">🤠</div>
-
-  <div class="street-sign">
-    WELCOME TO SUNSET TOWN
-  </div>
-
-</section>
-
-<nav class="nav">
-  <button class="active" data-tab="town">🏜️ البلدة</button>
-  <button data-tab="character">🤠 شخصيتي</button>
-  <button data-tab="store">🛍️ المتجر</button>
-  <button data-tab="duel">⭐ ساحة التحدي</button>
-</nav>
-
-<section class="content" id="town">
-
-  <h2>مرحبًا بك في البلدة!</h2>
-
-  <p>
-    تجوّل في البلدة، جهّز شخصيتك،
-    واجمع العملات والسمعة من التحديات.
-  </p>
-
-  <div class="grid">
-
-    <div class="item">
-      <div class="big">🏠</div>
-      <b>الصالون</b>
-      <p class="muted">مكان تجمع أهل البلدة.</p>
-      <button onclick="showTab('duel')">
-        دخول ساحة التحدي
-      </button>
-    </div>
-
-    <div class="item">
-      <div class="big">🏪</div>
-      <b>المتجر العام</b>
-      <p class="muted">اختر قبعة جديدة.</p>
-      <button onclick="showTab('store')">
-        زيارة المتجر
-      </button>
-    </div>
-
-    <div class="item">
-      <div class="big">🧍</div>
-      <b>ملف الشخصية</b>
-      <p class="muted">غيّر مظهرك واسمك.</p>
-      <button onclick="showTab('character')">
-        تخصيص الشخصية
-      </button>
-    </div>
-
-  </div>
-</section>
-
-<section class="content hidden" id="character">
-
-  <h2>شخصيتي</h2>
-
-  <div class="row">
-    <label>
-      اسم اللاعب:
-      <input id="player" value="راعي البلدة" maxlength="18">
-    </label>
-
-    <button onclick="saveName()">حفظ الاسم</button>
-  </div>
-
-  <p>اختر مظهرك:</p>
-
-  <div class="grid">
-
-    <div class="item">
-      <div class="big">🤠</div>
-      <b>راعي بقر</b><br>
-      <button onclick="chooseLook('🤠')">اختيار</button>
-    </div>
-
-    <div class="item">
-      <div class="big">🧑‍🌾</div>
-      <b>مستكشف</b><br>
-      <button onclick="chooseLook('🧑‍🌾')">اختيار</button>
-    </div>
-
-    <div class="item">
-      <div class="big">👩‍🌾</div>
-      <b>فارسة</b><br>
-      <button onclick="chooseLook('👩‍🌾')">اختيار</button>
-    </div>
-
-    <div class="item">
-      <div class="big">🤠</div>
-      <b>قبعة داكنة</b><br>
-      <button onclick="chooseLook('🤠')">اختيار</button>
-    </div>
-
-  </div>
-
-  <div class="notice">
-    اختيار المظهر يغيّر رمز الشخصية في مشهد البلدة.
-  </div>
-
-</section>
-
-<section class="content hidden" id="store">
-
-  <h2>المتجر العام</h2>
-
-  <p>اشترِ عناصر تجميلية باستخدام العملات التجريبية.</p>
-
-  <div class="grid">
-
-    <div class="item">
-      <div class="big">🤠</div>
-      <b>قبعة بنية</b>
-      <p>30 🪙</p>
-      <button onclick="buy(30,'تم شراء القبعة البنية!')">
-        شراء
-      </button>
-    </div>
-
-    <div class="item">
-      <div class="big">🧣</div>
-      <b>وشاح أحمر</b>
-      <p>25 🪙</p>
-      <button onclick="buy(25,'تم شراء الوشاح الأحمر!')">
-        شراء
-      </button>
-    </div>
-
-    <div class="item">
-      <div class="big">🥾</div>
-      <b>حذاء مغامر</b>
-      <p>40 🪙</p>
-      <button onclick="buy(40,'تم شراء حذاء المغامر!')">
-        شراء
-      </button>
-    </div>
-
-  </div>
-
-  <p id="shopMsg" class="notice">
-    رصيدك 100 عملة تجريبية.
-  </p>
-
-</section>
-
-<section class="content hidden" id="duel">
-
-  <h2>ساحة التحدي</h2>
-
-  <p>
-    انتظر ظهور الإشارة ثم اضغط الزر.
-    هذه المرحلة محلية على جهازك وليست مبارزة أونلاين.
-  </p>
-
-  <div id="duelBox">
-
-    <div id="duelSignal">هل أنت مستعد؟</div>
-
-    <div id="duelResult">
-      ابدأ عندما تكون جاهزًا.
-    </div>
-
-    <div class="row" style="justify-content:center;margin-top:12px">
-      <button id="begin">ابدأ التحدي</button>
-      <button id="react" disabled>الآن!</button>
-    </div>
-
-  </div>
-
-</section>
-
-<footer>
-  نسخة تجريبية غير رسمية.
-  الرسومات هنا رمزية وليست ملفات اللعبة الأصلية.
-  اللعب الجماعي والغرف الخاصة لم تُضف بعد.
-</footer>
-
-</main>
-
-<script>
-
-let coins=100;
-let fame=0;
-let look='🤠';
-let wait=false;
-let signalAt=0;
-let delayId;
-
-const coinsEl=document.getElementById('coins');
-const fameEl=document.getElementById('fame');
-
-function showTab(id) {
-
-  document.querySelectorAll('.content')
-    .forEach(x=>x.classList.add('hidden'));
-
-  document.getElementById(id)
-    .classList.remove('hidden');
-
-  document.querySelectorAll('.nav button')
-    .forEach(b=>{
-      b.classList.toggle(
-        'active',
-        b.dataset.tab===id
-      );
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x91c5df);
+scene.fog = new THREE.Fog(0x91c5df, 35, 115);
+const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 200);
+camera.position.set(0, 2, 8);
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+document.body.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8b6848,2));
+const sun = new THREE.DirectionalLight(0xffffff,2);
+sun.position.set(-10,20,10);
+scene.add(sun);
+const material = (color)=>new THREE.MeshStandardMaterial({color});
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(200,200),
+  material(0xc49a62)
+);
+ground.rotation.x=-Math.PI/2;
+ground.position.y=0;
+scene.add(ground);
+function box(x,y,z,w,h,d,color){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material(color));
+ m.position.set(x,y,z);
+ scene.add(m);
+ return m;
+}
+// الطريق
+box(0,0.015,-25,9,0.03,100,0x9b805e);
+// مباني البلدة
+for(let i=0;i<12;i++){
+ const side=i%2===0?-1:1;
+ const z=-i*8-5;
+ const x=side*(8+Math.random()*3);
+ const width=4+Math.random()*2;
+ const height=4+Math.random()*3;
+ box(x,height/2,z,width,height,5,0x9b5936);
+ box(x,height+0.15,z,width+0.4,0.35,5.4,0x503126);
+ box(x,1.2,z-2.56,1.2,2.4,0x453027);
+ box(x,2.7,z-2.58,1.1,0.3,0x3c281f);
+}
+// براميل
+for(let i=0;i<10;i++){
+ const barrel=new THREE.Mesh(
+  new THREE.CylinderGeometry(0.55,0.55,1.1,16),
+  material(0x76502e)
+ );
+ barrel.position.set(i%2===0?-5:5,0.55,-i*8-4);
+ scene.add(barrel);
+}
+// تلال بعيدة
+for(let i=0;i<9;i++){
+ const hill=new THREE.Mesh(
+  new THREE.SphereGeometry(1,16,12),
+  material(0x9d9862)
+ );
+ hill.scale.set(8,4,5);
+ hill.position.set(i*15-60,1,-48);
+ scene.add(hill);
+}
+// شخصية هدف خيالية
+const target=new THREE.Group();
+const body=new THREE.Mesh(
+ new THREE.CylinderGeometry(0.55,0.7,1.5,12),
+ material(0x315b73)
+);
+body.position.y=1.3;
+target.add(body);
+const head=new THREE.Mesh(
+ new THREE.SphereGeometry(0.48,16,16),
+ material(0xd5a77d)
+);
+head.position.y=2.35;
+target.add(head);
+const hat=new THREE.Mesh(
+ new THREE.CylinderGeometry(0.8,0.8,0.15,16),
+ material(0x38251b)
+);
+hat.position.y=2.8;
+target.add(hat);
+target.position.set(0,0,-23);
+scene.add(target);
+// الأداة الخيالية أمام الكاميرا
+const gadget=new THREE.Group();
+const gadgetBody=new THREE.Mesh(
+ new THREE.BoxGeometry(0.22,0.25,0.65),
+ material(0x394b5a)
+);
+gadget.add(gadgetBody);
+const glow=new THREE.Mesh(
+ new THREE.SphereGeometry(0.13,16,16),
+ new THREE.MeshBasicMaterial({color:0x55eaff})
+);
+glow.position.z=-0.35;
+gadget.add(glow);
+const ring=new THREE.Mesh(
+ new THREE.TorusGeometry(0.16,0.035,8,20),
+ new THREE.MeshBasicMaterial({color:0x55eaff})
+);
+ring.position.z=-0.38;
+gadget.add(ring);
+camera.add(gadget);
+gadget.position.set(0.48,-0.42,-0.8);
+scene.add(camera);
+// العملات المحلية
+let coins=Number(localStorage.getItem('hn_demo_coins')||100);
+document.getElementById('coins').textContent=coins;
+function addCoins(amount){
+ coins+=amount;
+ localStorage.setItem('hn_demo_coins',coins);
+ document.getElementById('coins').textContent=coins;
+}
+// عصا التحكم
+const stick=document.getElementById('stick');
+const knob=document.getElementById('knob');
+let stickX=0,stickY=0,stickActive=false;
+function moveStick(e){
+ const r=stick.getBoundingClientRect();
+ const cx=r.left+r.width/2;
+ const cy=r.top+r.height/2;
+ let dx=e.clientX-cx;
+ let dy=e.clientY-cy;
+ const max=38;
+ const len=Math.hypot(dx,dy);
+ if(len>max){dx=dx/len*max;dy=dy/len*max}
+ stickX=dx/max;
+ stickY=dy/max;
+ knob.style.left=(35+dx)+'px';
+ knob.style.top=(35+dy)+'px';
+}
+stick.addEventListener('pointerdown',e=>{
+ stickActive=true;
+ stick.setPointerCapture(e.pointerId);
+ moveStick(e);
+});
+stick.addEventListener('pointermove',e=>{
+ if(stickActive)moveStick(e);
+});
+function resetStick(){
+ stickActive=false;
+ stickX=0;
+ stickY=0;
+ knob.style.left='35px';
+ knob.style.top='35px';
+}
+stick.addEventListener('pointerup',resetStick);
+stick.addEventListener('pointercancel',resetStick);
+// النظر بالسحب
+let lookActive=false,lastX=0,lastY=0;
+renderer.domElement.addEventListener('pointerdown',e=>{
+ lookActive=true;
+ lastX=e.clientX;
+ lastY=e.clientY;
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+ if(!lookActive)return;
+ const dx=e.clientX-lastX;
+ const dy=e.clientY-lastY;
+ camera.rotation.order='YXZ';
+ camera.rotation.y-=dx*0.004;
+ camera.rotation.x-=dy*0.003;
+ camera.rotation.x=Math.max(-1.2,Math.min(1.2,camera.rotation.x));
+ lastX=e.clientX;
+ lastY=e.clientY;
+});
+window.addEventListener('pointerup',()=>lookActive=false);
+// القفز
+let jumpVelocity=0;
+let playerHeight=2;
+let jumping=false;
+function jump(){
+ if(!jumping){
+  jumpVelocity=0.18;
+  jumping=true;
+ }
+}
+document.getElementById('jump').addEventListener('pointerdown',jump);
+// إطلاق كرات طاقة خيالية
+const projectiles=[];
+function fire(){
+ const orb=new THREE.Mesh(
+  new THREE.SphereGeometry(0.16,12,12),
+  new THREE.MeshBasicMaterial({color:0x45eaff})
+ );
+ const direction=new THREE.Vector3();
+ camera.getWorldDirection(direction);
+ orb.position.copy(camera.position).add(direction.clone().multiplyScalar(1));
+ orb.userData.velocity=direction.multiplyScalar(0.65);
+ orb.userData.life=100;
+ scene.add(orb);
+ projectiles.push(orb);
+ document.getElementById('message').textContent='✨ انطلقت كرة الطاقة!';
+ setTimeout(()=>document.getElementById('message').textContent='',900);
+}
+document.getElementById('fire').addEventListener('pointerdown',fire);
+// بدء اللعبة
+let started=false;
+document.getElementById('start').addEventListener('click',()=>{
+ started=true;
+ document.getElementById('start').style.display='none';
+});
+// الحركة
+const clock=new THREE.Clock();
+function animate(){
+ requestAnimationFrame(animate);
+ const dt=Math.min(clock.getDelta(),0.04);
+ if(started){
+  const speed=7*dt;
+  const forward=new THREE.Vector3();
+  camera.getWorldDirection(forward);
+  forward.y=0;
+  forward.normalize();
+  const right=new THREE.Vector3().crossVectors(forward,new THREE.Vector3(0,1,0)).normalize();
+  camera.position.addScaledVector(forward,-stickY*speed);
+  camera.position.addScaledVector(right,stickX*speed);
+  // القفز
+  if(jumping){
+   playerHeight+=jumpVelocity;
+   jumpVelocity-=0.012;
+   if(playerHeight<=2){
+    playerHeight=2;
+    jumping=false;
+    jumpVelocity=0;
+   }
+   camera.position.y=playerHeight;
+  }
+ }
+ // حركة كرات الطاقة
+ for(let i=projectiles.length-1;i>=0;i--){
+  const p=projectiles[i];
+  p.position.add(p.userData.velocity);
+  p.userData.life--;
+  if(p.position.distanceTo(target.position.clone().add(new THREE.Vector3(0,1.5,0)))<1.2){
+   target.children.forEach(part=>{
+    part.material.color.setHex(0x55ddee);
+   });
+   addCoins(5);
+   document.getElementById('message').textContent='أصبت الهدف! +5 عملات';
+   setTimeout(()=>{
+    target.children.forEach((part,index)=>{
+     part.material.color.setHex(index===0?0x315b73:index===1?0xd5a77d:0x38251b);
     });
-}
-
-document.querySelectorAll('.nav button')
-.forEach(b=>{
-  b.addEventListener('click',()=>{
-    showTab(b.dataset.tab);
-  });
-});
-
-function chooseLook(x) {
-  look=x;
-  document.getElementById('hero').textContent=x;
-}
-
-function saveName() {
-  let v=document.getElementById('player').value.trim();
-
-  if(v) {
-    alert('تم حفظ الاسم: '+v);
+    document.getElementById('message').textContent='';
+   },700);
+   scene.remove(p);
+   projectiles.splice(i,1);
+  }else if(p.userData.life<=0){
+   scene.remove(p);
+   projectiles.splice(i,1);
   }
+ }
+ // حركة بسيطة للهدف
+ target.position.y=Math.sin(performance.now()*0.002)*0.08;
+ renderer.render(scene,camera);
 }
-
-function buy(cost,msg) {
-
-  let out=document.getElementById('shopMsg');
-
-  if(coins<cost) {
-    out.textContent='عملاتك لا تكفي لهذا العنصر.';
-    return;
-  }
-
-  coins-=cost;
-  coinsEl.textContent=coins;
-
-  out.textContent=msg+' (العنصر تجميلي تجريبي).';
-}
-
-document.getElementById('begin')
-.addEventListener('click',()=>{
-
-  clearTimeout(delayId);
-
-  wait=true;
-  signalAt=0;
-
-  let s=document.getElementById('duelSignal');
-  let r=document.getElementById('duelResult');
-  let b=document.getElementById('begin');
-  let a=document.getElementById('react');
-
-  s.textContent='انتظر الإشارة...';
-  r.textContent='لا تضغط قبل ظهور «الآن!»';
-
-  b.disabled=true;
-  a.disabled=true;
-
-  delayId=setTimeout(()=>{
-
-    if(!wait)return;
-
-    signalAt=performance.now();
-    s.textContent='الآن!';
-    a.disabled=false;
-
-  },1000+Math.random()*2500);
-
+animate();
+window.addEventListener('resize',()=>{
+ camera.aspect=innerWidth/innerHeight;
+ camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);
 });
-
-document.getElementById('react')
-.addEventListener('click',()=>{
-
-  if(!wait)return;
-
-  let s=document.getElementById('duelSignal');
-  let r=document.getElementById('duelResult');
-  let b=document.getElementById('begin');
-  let a=document.getElementById('react');
-
-  if(!signalAt) {
-
-    clearTimeout(delayId);
-    wait=false;
-
-    s.textContent='تسرّعت!';
-    r.textContent='انتظر الإشارة وحاول مرة أخرى.';
-
-    b.disabled=false;
-    a.disabled=true;
-
-    return;
-  }
-
-  let ms=Math.round(performance.now()-signalAt);
-
-  wait=false;
-  a.disabled=true;
-  b.disabled=false;
-
-  coins+=10;
-  fame+=1;
-
-  coinsEl.textContent=coins;
-  fameEl.textContent=fame;
-
-  s.textContent='أحسنت!';
-
-  r.textContent=
-    'زمن استجابتك '+ms+
-    ' مللي ثانية. حصلت على 10 عملات ونقطة سمعة.';
-
-});
-
 </script>
-
 </body>
 </html>
